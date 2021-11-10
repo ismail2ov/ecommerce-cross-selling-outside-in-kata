@@ -1,6 +1,7 @@
 package com.github.ismail2ov.ecommercecrosssellingoutsideinkata.infrastructure;
 
 import com.github.ismail2ov.ecommercecrosssellingoutsideinkata.application.ProductService;
+import com.github.ismail2ov.ecommercecrosssellingoutsideinkata.domain.ProductNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,4 +34,12 @@ public class ProductControllerShould {
                 .andExpect(jsonPath("$.size()").value(0));
     }
 
+    @Test
+    void return_not_found_if_the_product_does_not_exists() throws Exception {
+        when(productService.getProductBy(1L)).thenThrow(ProductNotFoundException.class);
+
+        this.mockMvc
+                .perform(get("/api/products/1"))
+                .andExpect(status().isNotFound());
+    }
 }
